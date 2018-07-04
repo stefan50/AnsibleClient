@@ -4,10 +4,13 @@ class AnsibleClient:
     """
     initializing the class TODO!!!
     name - name of the connection, "connection" by default
+    user - name of user, default root NOT RECOMMENDED!
     """
-    def __init__(self, name="connection"):
+    def __init__(self, name="connection", user="root"):
         print("Welcome to Ansible Client! What do you want to setup?")
-        self.initialize_file(name, self.parse_hosts())
+        self.connection_file = name + ".yml"
+        self.user = user
+        self.initialize_file(self.parse_hosts())
 
     def parse_hosts(self):
         res = []
@@ -26,7 +29,8 @@ class AnsibleClient:
 
     def connect_with_hosts(self):
         hosts = self.parse_hosts()
-        os.spawnlp(os.P_WAIT, "ansible", "ansible", hosts, "-m", "ping", "-u", "test")
+        cmd = "ansible " + hosts[0] + "-m ping -u " + self.user
+        os.system(cmd)
 
     """
     a method which shows every host - for now a simple cat
@@ -41,15 +45,40 @@ class AnsibleClient:
     Starts the connection
     """
     def start_connection(self):
-        os.system("ansible-playbook connection.yml")
+        cmd = ("ansible-playbook " + self.connection_file + " -u " + self.user +
+              " --ask-become-pass")
+        os.system(cmd)
 
-    def initialize_file(self, name, hosts):
-        name += ".yml"
-        f = open(name, "w")
+    """
+    This method is used to initialize the yaml file, meaning that it only adds
+    the hosts/groups to the file without any other action
+    """
+    def initialize_file(self, hosts):
+        f = open(self.connection_file, "w")
         for h in hosts:
             f.write("- hosts: " + h)
-        cmd = "cat " + name
-        os.system(cmd)
+        f.close()
+
+    """
+    adds package name to be installed for a host, leave host blank to
+    have the all group as default
+    """
+    def install(self, host, package):
+        with open(self.connection_file, "r") as in_file:
+            buf = in_file.readlines()
+
+        with open(self.connection_file, "w") as out_file:
+            for line in buf:
+                l = len(line)
+                if line[9:l].rstrip() == host:
+                    line += ("\n  remote_user: " +  self.user +
+                             "\n  become: yes" +
+                             "\n  become_method: su")
+                    line += ("\n  tasks:\n    - name: Installing "
+                            + package + "\n      apt:\n        name: "
+                            + package + "\n")
+                out_file.write(line)
+
 
 #p = AnsibleClient()
 #p.show_my_hosts()
