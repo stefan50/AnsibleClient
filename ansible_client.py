@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, re
 
 class AnsibleClient:
     """
@@ -65,8 +65,7 @@ class AnsibleClient:
         token = False
         #print(open(self.connection_file, "r").read().find('tasks'))
         f = open(self.connection_file, "r")
-        for line in f.read():
-            print(line)
+        for line in f.readlines():
             if line.strip() == "tasks:":
                 token = True
         f.close()
@@ -82,7 +81,7 @@ class AnsibleClient:
         with open(self.connection_file, "r") as in_file:
             buf = in_file.readlines()
 
-        with open(self.connection_file, "w") as out_file:
+        with open(self.connection_file, "r+") as out_file:
             for line in buf:
                 l = len(line)
                 if line[9:l].rstrip() == host:
@@ -92,8 +91,8 @@ class AnsibleClient:
                     if not self.check():
                         line += ("\n  tasks:\n    ")
                     line += ("- name: Installing "
-                            + package + "\n      apt:\n        name: "
-                            + package + "\n")
+                              + package + "\n      apt:\n        name: "
+                              + package + "\n")
                 out_file.write(line)
 
     """
