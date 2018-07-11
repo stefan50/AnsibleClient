@@ -12,6 +12,11 @@ class AnsibleClient:
         self.user = user
         self.initialize_file(self.parse_hosts())
 
+    """
+    From the given tmp.txt file, take only these lines which have
+    important information aka an entry
+    !IMPORTANT! Doesn't support groups yet!
+    """
     def parse_hosts(self):
         res = []
         self.show_my_hosts("tmp")
@@ -26,7 +31,9 @@ class AnsibleClient:
         os.system("rm tmp.txt")
         return res
 
-
+    """
+    Tests the connectivity between you and your host(s)
+    """
     def connect_with_hosts(self):
         hosts = self.parse_hosts()
         cmd = "ansible " + hosts[0] + "-m ping -u " + self.user
@@ -42,14 +49,6 @@ class AnsibleClient:
         os.system(sys_call)
 
     """
-    Starts the connection
-    """
-    def start_connection(self):
-        cmd = ("ansible-playbook " + self.connection_file + " -u " + self.user +
-              " --ask-become-pass")
-        os.system(cmd)
-
-    """
     This method is used to initialize the yaml file, meaning that it only adds
     the hosts/groups to the file without any other action
     """
@@ -57,13 +56,29 @@ class AnsibleClient:
         f = open(self.connection_file, "w")
         for h in hosts:
             f.write("- hosts: " + h)
+            f.write("\n  remote_user: " +  self.user +
+                     "\n  become: yes" +
+                     "\n  become_method: su")
         f.close()
+
+    def check(self):
+        token = False
+        #print(open(self.connection_file, "r").read().find('tasks'))
+        f = open(self.connection_file, "r")
+        for line in f.read():
+            print(line)
+            if line.strip() == "tasks:":
+                token = True
+        f.close()
+        print(token)
+        return token
 
     """
     adds package name to be installed for a host, leave host blank to
     have the all group as default
     """
     def install(self, host, package):
+        token = False
         with open(self.connection_file, "r") as in_file:
             buf = in_file.readlines()
 
@@ -71,14 +86,23 @@ class AnsibleClient:
             for line in buf:
                 l = len(line)
                 if line[9:l].rstrip() == host:
-                    line += ("\n  remote_user: " +  self.user +
-                             "\n  become: yes" +
-                             "\n  become_method: su")
-                    line += ("\n  tasks:\n    - name: Installing "
+                    #line += ("\n  remote_user: " +  self.user +
+                    #         "\n  become: yes" +
+                    #         "\n  become_method: su")
+                    if not self.check():
+                        line += ("\n  tasks:\n    ")
+                    line += ("- name: Installing "
                             + package + "\n      apt:\n        name: "
                             + package + "\n")
                 out_file.write(line)
 
+    """
+    Runs the file
+    """
+    def __del__(self):
+        cmd = ("ansible-playbook " + self.connection_file + " -u " + self.user +
+              " --ask-become-pass")
+        os.system(cmd)
 
 #p = AnsibleClient()
 #p.show_my_hosts()

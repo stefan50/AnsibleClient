@@ -1,9 +1,15 @@
 - hosts: 192.168.122.148
 
-  remote_user: test
-  become: yes
-  become_method: su
+  tasks:
+    - name: Installing apache2
+      apt:
+        name: apache2
+
   tasks:
     - name: Installing htop
       apt:
         name: htop
+
+  remote_user: test
+  become: yes
+  become_method: su
