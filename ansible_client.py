@@ -99,7 +99,7 @@ class AnsibleClient:
     """
     Given an iso file, installs a VM, using KVM
     """
-    def create_vm(self, iso, name_vm="generic_test", ram):
+    def create_vm(self, iso, ram, name_vm="generic_test"):
         os.system(("sudo virt-install --name="
                     + name_vm + " --file=" + iso
                     + " --file-size=8 --ram=" + ram
