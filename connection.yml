@@ -1,7 +1,4 @@
 - hosts: 192.168.122.148
-- name: Installing htop
-      apt:
-        name: htop
 
   tasks:
     - name: Installing apache2

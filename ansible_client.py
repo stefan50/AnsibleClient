@@ -1,4 +1,4 @@
-import sys, os, re
+import sys, os
 
 class AnsibleClient:
     """
@@ -61,6 +61,10 @@ class AnsibleClient:
                      "\n  become_method: su")
         f.close()
 
+    """
+    Checks if the keyword 'tasks' is present and returns
+    a bool value
+    """
     def check(self):
         token = False
         #print(open(self.connection_file, "r").read().find('tasks'))
@@ -90,6 +94,8 @@ class AnsibleClient:
                     #         "\n  become_method: su")
                     if not self.check():
                         line += ("\n  tasks:\n    ")
+                    else:
+                        print(out_file.read().find("tasks:"))
                     line += ("- name: Installing "
                               + package + "\n      apt:\n        name: "
                               + package + "\n")
@@ -112,10 +118,3 @@ class AnsibleClient:
         cmd = ("ansible-playbook " + self.connection_file + " -u " + self.user +
               " --ask-become-pass")
         os.system(cmd)
-
-#p = AnsibleClient()
-#p.show_my_hosts()
-#p.connect_with_hosts()
-
-# AnsibleClient.
-# p.show_my_hosts()
