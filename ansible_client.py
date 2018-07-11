@@ -97,6 +97,16 @@ class AnsibleClient:
                 out_file.write(line)
 
     """
+    Given an iso file, installs a VM, using KVM
+    """
+    def create_vm(self, iso, name_vm="generic_test", ram):
+        os.system(("sudo virt-install --name="
+                    + name_vm + " --file=" + iso
+                    + " --file-size=8 --ram=" + ram
+                    + " --os-type=linux --import"))
+
+
+    """
     Runs the file
     """
     def __del__(self):
