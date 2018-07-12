@@ -94,8 +94,6 @@ class AnsibleClient:
                     #         "\n  become_method: su")
                     if not self.check():
                         line += ("\n  tasks:\n    ")
-                    else:
-                        print(out_file.read().find("tasks:"))
                     line += ("- name: Installing "
                               + package + "\n      apt:\n        name: "
                               + package + "\n")
@@ -104,11 +102,12 @@ class AnsibleClient:
     """
     Given an iso file, installs a VM, using KVM
     """
-    def create_vm(self, iso, ram, name_vm="generic_test"):
+    @staticmethod
+    def create_vm(iso, ram, name_vm="generic_est"):
         os.system(("sudo virt-install --name="
-                    + name_vm + " --file=" + iso
-                    + " --file-size=8 --ram=" + ram
-                    + " --os-type=linux --import"))
+                    + name_vm + " -c " + iso
+                    + " --file-size=8 --ram=" + str(ram)
+                    + " --os-type=linux "))
 
 
     """

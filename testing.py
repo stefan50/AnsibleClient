@@ -1,5 +1,4 @@
 import ansible_client as ac
 
-p = ac.AnsibleClient(user="test")
-p.install("192.168.122.148", "apache2")
-p.install("192.168.122.148", "htop")
+#p = ac.AnsibleClient(user="test")
+ac.AnsibleClient.create_vm("../../../Downloads/debian-9.4.0-i386-netinst.iso", 1024)
