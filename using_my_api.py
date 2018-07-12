@@ -11,19 +11,14 @@ if answer.lower() == 'y' or answer.lower() == 'yes':
     ac.AnsibleClient.create_vm(iso, 1024, name)
 
 del answer
-p = ac.AnsibleClient(user="test")
-apps = ["apache2", "nginx", "htop"]
-for a in apps:
-    answer = input(("Do you want " + a + " [N/y]:"))
-    if answer.lower() == 'y' or answer.lower() == 'yes':
-        p.install("192.168.122.148", a)
 
 while(True):
-    print("Now you can do something with your VMs:")
+    print("You can do something with your VMs:")
     name = input("Name?:")
     print("1 - Start a machine")
     print("2 - Stop a machine")
     print("3 - Shut a machine down")
+    print("4 - Install")
     answer = input("Now you can choose:")
     if(answer == 1):
         ac.AnsibleClient.vm_start(name)
@@ -31,5 +26,12 @@ while(True):
         ac.AnsibleClient.vm_stop(name)
     elif(answer == 3):
         ac.AnsibleClient.vm_shutdown(name)
+    elif(answer == 4):
+        p = ac.AnsibleClient(user="test")
+        apps = ["apache2", "nginx", "htop"]
+        for a in apps:
+            answer = input(("Do you want " + a + " [N/y]:"))
+            if answer.lower() == 'y' or answer.lower() == 'yes':
+                p.install("192.168.122.148", a)
     elif(answer == "quit"):
         sys.exit()
