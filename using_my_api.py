@@ -1,7 +1,8 @@
 import ansible_client as ac
+import sys
 
-p = ac.AnsibleClient(user="test")
 answer = input("Do you want a VM? [N/y]:")
+print(answer)
 if answer.lower() == 'y' or answer.lower() == 'yes':
     iso = input("Give me a path to the iso file:")
     name = input("Give me a name for the VM, leave blank for default:")
@@ -10,6 +11,7 @@ if answer.lower() == 'y' or answer.lower() == 'yes':
     ac.AnsibleClient.create_vm(iso, 1024, name)
 
 del answer
+p = ac.AnsibleClient(user="test")
 apps = ["apache2", "nginx", "htop"]
 for a in apps:
     answer = input(("Do you want " + a + " [N/y]:"))
