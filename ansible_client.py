@@ -89,9 +89,6 @@ class AnsibleClient:
             for line in buf:
                 l = len(line)
                 if line[9:l].rstrip() == host:
-                    #line += ("\n  remote_user: " +  self.user +
-                    #         "\n  become: yes" +
-                    #         "\n  become_method: su")
                     if not self.check():
                         line += ("\n  tasks:\n    ")
                     line += ("- name: Installing "
