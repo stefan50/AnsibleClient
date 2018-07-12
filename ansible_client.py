@@ -103,12 +103,32 @@ class AnsibleClient:
     Given an iso file, installs a VM, using KVM
     """
     @staticmethod
-    def create_vm(iso, ram, name_vm="generic_est"):
+    def create_vm(iso, ram, name_vm="generic_test"):
         os.system(("sudo virt-install --name="
                     + name_vm + " -c " + iso
                     + " --file-size=8 --ram=" + str(ram)
                     + " --os-type=linux "))
 
+    """
+    For me
+    """
+    @staticmethod
+    def do_something_with_vm(name_vm="generic_test", command="status"):
+        cmd = ("ansible localhost -m virt -a 'name="
+                + name_vm + " command=" + command + "'")
+        os.system(cmd)
+
+    @staticmethod
+    def vm_start(name_vm="generic_test"):
+        AnsibleClient.do_something_with_vm(name_vm, "start")
+
+    @staticmethod
+    def vm_stop(name_vm="generic_test"):
+        AnsibleClient.do_something_with_vm(name_vm, "stop")
+
+    @staticmethod
+    def vm_shutdown(name_vm="generic_test"):
+        AnsibleClient.do_something_with_vm(name_vm, "shutdown")
 
     """
     Runs the file
